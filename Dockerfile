@@ -25,10 +25,14 @@ RUN cp .env.example .env \
 RUN sed -ri 's!DocumentRoot /var/www/html!DocumentRoot /var/www/html/public!g' /etc/apache2/sites-available/*.conf \
  && sed -ri 's!AllowOverride None!AllowOverride All!g' /etc/apache2/apache2.conf
 
-# 8. Ajusta permisos para storage y cache
+# 8) Copia el script de arranque y dale permisos
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# 9. Ajusta permisos para storage y cache
 RUN chown -R www-data:www-data storage bootstrap/cache \
  && chmod -R 775 storage bootstrap/cache
 
-# 9. Expone el puerto 80 y arranca Apache
+# 10. Expone el puerto 80 y arranca Apache
 EXPOSE 80
 CMD ["apache2-foreground"]
