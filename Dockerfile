@@ -1,38 +1,48 @@
-# 1. Base de PHP + Apache
-FROM php:8.4-apache
+# Usa la imagen oficial de PHP con Apache
+FROM php:8.3-apache
 
-# 2. Instala extensiones necesarias y habilita mod_rewrite
-RUN apt-get update \
- && apt-get install -y libpq-dev unzip \
- && docker-php-ext-install pdo_pgsql \
- && a2enmod rewrite
+# Instala dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    zip \
+    unzip \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    libpq-dev \
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd zip
 
-# 3. Establece el directorio de trabajo
+# Habilita mod_rewrite de Apache
+RUN a2enmod rewrite
+
+# Instala Composer globalmente
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Instala Node.js (opcional, para compilar assets con Vite o Mix)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# Establece el directorio de trabajo
 WORKDIR /var/www/html
 
-# 4. Copia todo el código de tu proyecto
+# Copia los archivos de tu proyecto Laravel al contenedor
 COPY . /var/www/html
 
-# 5. Copia Composer desde su imagen oficial e instala dependencias
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-RUN composer install --no-dev --optimize-autoloader
+# Da permisos a la carpeta de almacenamiento y caché
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage
 
-# 6. Prepara el .env y genera la APP_KEY
-RUN cp .env.example .env \
- && php artisan key:generate --ansi
+# Instala dependencias de Composer y Node.js
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader \
+    && npm install && npm run build
 
-# 7. Ajusta DocumentRoot a public/ y permite .htaccess
-RUN sed -ri 's!DocumentRoot /var/www/html!DocumentRoot /var/www/html/public!g' /etc/apache2/sites-available/*.conf \
- && sed -ri 's!AllowOverride None!AllowOverride All!g' /etc/apache2/apache2.conf
+# Configura Apache para servir la aplicación Laravel desde la carpeta public
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# 8) Copia el script de arranque y dale permisos
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# 9. Ajusta permisos para storage y cache
-RUN chown -R www-data:www-data storage bootstrap/cache \
- && chmod -R 775 storage bootstrap/cache
-
-# 10. Expone el puerto 80 y arranca Apache
+# Expone el puerto 80
 EXPOSE 80
+
+# Comando por defecto para correr Apache en primer plano
 CMD ["apache2-foreground"]
