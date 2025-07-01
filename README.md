@@ -1,66 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Hotel Management
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Una aplicación full‑stack para gestionar hoteles, tipos de habitaciones y acomodos.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🔎 Descripción
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Este proyecto permite:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* CRUD de **Hoteles** (nombre, dirección, ciudad, NIT, número máximo de habitaciones).
+* Gestión de **Tipos de Habitación** y **Acomodaciones**.
+* Asignación de combinaciones (tipo de habitación + acomodación + cantidad) por hotel.
+* Visualización y edición desde un **frontend React (Vite + TypeScript)**.
+* Backend RESTful con **Laravel (PHP)** y base de datos **PostgreSQL**.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📋 Requisitos
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+* PHP >= 8.1
+* Composer
+* Node.js >= 16
+* npm / pnpm / yarn
+* PostgreSQL >= 12
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## ⚙️ Instalación
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. Clona el repositorio:
 
-### Premium Partners
+   ```bash
+   git clone https://github.com/usuario/hotel-management.git
+   cd hotel-management
+   ```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+2. Backend (Laravel):
 
-## Contributing
+   ```bash
+   composer install
+   cp .env.example .env
+   php artisan key:generate
+   # Configura en .env la conexión a PostgreSQL
+   php artisan migrate --seed
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Frontend (React / Vite):
 
-## Code of Conduct
+   ```bash
+   cd frontend  # o carpeta src si está integrado
+   npm install
+   npm run dev
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. Abre:
 
-## Security Vulnerabilities
+   * Backend: [http://localhost:8000](http://localhost:8000)(https://api-hotel-01nz.onrender.com/api)
+   * Frontend: [http://localhost:5173](http://localhost:5173)(https://hotel-front-rho.vercel.app)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🚀 Uso
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Rutas de la API
+
+| Método | Endpoint                           | Descripción                         |
+| ------ | ---------------------------------- | ----------------------------------- |
+| GET    | `/api/hotels`                      | Listar todos los hoteles            |
+| POST   | `/api/hotels`                      | Crear un hotel                      |
+| GET    | `/api/hotels/{id}`                 | Obtener detalle de un hotel         |
+| PUT    | `/api/hotels/{id}`                 | Actualizar hotel                    |
+| DELETE | `/api/hotels/{id}`                 | Eliminar hotel                      |
+| GET    | `/api/hotels/{hotel}/rooms`        | Listar asignaciones de habitaciones |
+| POST   | `/api/hotels/{hotel}/rooms`        | Asignar habitación                  |
+| PUT    | `/api/hotels/{hotel}/rooms/{room}` | Actualizar asignación               |
+| DELETE | `/api/hotels/{hotel}/rooms/{room}` | Eliminar asignación                 |
+| GET    | `/api/room-types`                  | Catalogo de tipos de habitación     |
+| GET    | `/api/accommodations`              | Catalogo de acomodos                |
+| GET    | `/api/hotels/{id}/accommodations`  | Obtener hotel + asignaciones        |
+
+### Frontend
+
+* Lista y formulario en `/hotels`.
+* Gestión de asignaciones en `/accommodations/:hotelId`.
+
+---
+
+## 📂 Estructura del Proyecto
+
+```text
+root/
+├── app/               # Lógica de Laravel (Controllers, Models, Services)
+├── database/          # Migrations y seeders
+├── routes/api.php     # Definición de rutas API
+├── resources/js/      # Frontend React (src/ con componentes y servicios)
+└── README.md          # Este documento
+```
+
+---
+
+## 🌐 Arquitectura
+
+```
+[ React + Vite ] ←→ [ Laravel API (REST) ] ←→ [ PostgreSQL ]
+```
+
+* **Controllers** llaman a **Services** que usan **Repositories**.
+* Front y back desacoplados.
+
+---2
+
+## 📜 Licencia
+
+MIT © German Gonzalo Rojas Perdomo
